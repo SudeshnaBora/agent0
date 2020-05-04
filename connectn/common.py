@@ -1,5 +1,7 @@
 from enum import Enum
 import numpy as np
+from typing import Callable, Tuple
+from typing import Optional
 
 BoardPiece = np.int8  # The data type of the board
 NO_PLAYER = BoardPiece(0)  # board[i, j] == NO_PLAYER where the position is empty
@@ -9,18 +11,28 @@ PLAYER2 = BoardPiece(2)  # board[i, j] == PLAYER2 where player 2 has a piece
 PlayerAction = np.int8  # The column to be played
 
 
+class SavedState:
+    pass
+
+
 class GameState(Enum):
     IS_WIN = 1
     IS_DRAW = -1
     STILL_PLAYING = 0
 
 
+GenMove = Callable[
+    [np.ndarray, BoardPiece, Optional[SavedState]],  # Arguments for the generate_move function
+    Tuple[PlayerAction, Optional[SavedState]]  # Return type of the generate_move function
+]
+
+
 def initialize_game_state() -> np.ndarray:
+    """
+    Initialises the board
+    :return: an numpy array of dimension 6X7
+    """
     return np.zeros((6, 7), dtype=BoardPiece)
-
-
-board = initialize_game_state()
-board[0, 0] = 2
 
 
 def pretty_print_board(input_board: np.ndarray) -> str:
