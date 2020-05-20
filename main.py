@@ -4,6 +4,7 @@ from typing import Optional, Callable
 from connectn.common import PlayerAction, BoardPiece, SavedState, GenMove, \
     PLAYER1, PLAYER2, GameState, initialize_game_state, \
     apply_player_action, check_end_state, pretty_print_board
+from agents.agent_minmax import generate_move
 
 
 def user_move(
@@ -12,7 +13,11 @@ def user_move(
     action = PlayerAction(-1)
     while not 0 <= action < board.shape[1]:
         try:
-            action = PlayerAction(input("Column? "))
+            player_action = input("Please give column number : ")
+            if board[board.shape[0] - 1, int(player_action)] != 0:
+                print(f"Column {player_action} is full, pick another!")
+            else:
+                action = PlayerAction(player_action)
         except:
             pass
     return action, saved_state
@@ -40,26 +45,19 @@ def human_vs_agent(
         gen_args = (args_1, args_2)[::play_first]
 
         playing = True
+        end_state = GameState.STILL_PLAYING
         while playing:
             for player, player_name, gen_move, args in zip(
                     players, player_names, gen_moves, gen_args,
             ):
                 t0 = time.time()
                 print(pretty_print_board(board))
-                print(
-                    f'{player_name} you are playing with \
-                    {"X" if player == PLAYER1 else "O"}'
-                )
                 action, saved_state[player] = gen_move(
                     board.copy(), player, saved_state[player], *args
                 )
-                while np.count_nonzero(board, axis=0)[action] == 6:
-                    print(f"Column {action} is full, pick another!")
-                    action, saved_state[player] = gen_move(
-                        board.copy(), player, saved_state[player], *args
-                    )
+                print('{} \'s action is {}'.format(player_name,action))
                 print(f"Move time: {time.time() - t0:.3f}s")
-                copied_board, board = apply_player_action(board, action, player)
+                board, r_board = apply_player_action(board, action, player, True)
                 end_state = check_end_state(board, player)
                 if end_state != GameState.STILL_PLAYING:
                     print(pretty_print_board(board))
@@ -72,8 +70,8 @@ def human_vs_agent(
                         )
                     playing = False
                     break
-        exit()
 
 
 if __name__ == "__main__":
-    human_vs_agent(user_move)
+    #human_vs_agent(user_move)
+    human_vs_agent(generate_move)

@@ -43,19 +43,23 @@ def string_to_board(pp_board: str) -> np.ndarray:
     pass
 
 
-def apply_player_action(d_board, action, player, copy=False) -> tuple:
-    placed = False
-    if copy:
-        copied_board = d_board
-    else:
-        copied_board = np.zeros((6, 7), dtype=BoardPiece)
+def check_valid_action(d_board, action, player) -> bool:
+    return d_board[5, action] == NO_PLAYER
 
-    for row in d_board:
-        if row[action] == NO_PLAYER:
-            d_board[row, action] = player
-            placed = True
-            break
-    if not placed:
+
+def apply_player_action(d_board, action, player, copy=False) -> tuple:
+    # Check if we can place it in that column
+    if check_valid_action(d_board, action, player):
+        if copy:
+            copied_board = np.copy(d_board)
+        else:
+            copied_board = d_board
+
+        for row in range(6):
+            if copied_board[row, action] == NO_PLAYER:
+                copied_board[row, action] = player
+                break
+    else:
         raise Exception('Cannot place player in that particular position')
 
     return copied_board, d_board
@@ -81,13 +85,13 @@ def connected_four(d_board, player, last_action=None) -> bool:
                 # right diagonal
                 if i <= 2 and j <= 3:
                     if element == d_board[i + 1, j + 1] and element == d_board[i + 2, j + 2] and element == d_board[
-                    i + 3, j + 3]:
+                        i + 3, j + 3]:
                         return True
 
                 # left diagonal
                 if i <= 2 and j >= 3:
                     if element == d_board[i + 1, j - 1] and element == d_board[i + 2, j - 2] and element == \
-                    d_board[i + 3, j - 3]:
+                            d_board[i + 3, j - 3]:
                         return True
 
                 return False
@@ -105,7 +109,22 @@ def check_end_state(c4_board, player) -> GameState:
 def check_board_full(c4_board) -> bool:
     for row in range(6):
         for col in range(7):
-            if c4_board[row, col] == 0:
+            if c4_board[row, col] == NO_PLAYER:
                 return False
 
     return True
+
+
+def get_free_row(d_board, action) -> int:
+    for row in range(6):
+        if d_board[row, action] == NO_PLAYER:
+            return row
+    return -1
+
+
+def get_free_columns(d_board) -> np.ndarray:
+    col_list = []
+    for col in range(7):
+        if d_board[5, col] == NO_PLAYER:
+            col_list.append(col)
+    return col_list
