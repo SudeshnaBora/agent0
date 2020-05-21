@@ -30,12 +30,19 @@ GenMove = Callable[
 def initialize_game_state() -> np.ndarray:
     """
     Initialises the board
+
     :return: an numpy array of dimension 6X7
     """
     return np.zeros((6, 7), dtype=BoardPiece)
 
 
 def pretty_print_board(input_board: np.ndarray) -> str:
+    """
+    Stringifies the board
+
+    :parameter input_board: the connect 4 playing board
+    :return: a stringified version of the board
+    """
     return '\n'.join([str(row) for row in input_board[::-1]])
 
 
@@ -43,13 +50,30 @@ def string_to_board(pp_board: str) -> np.ndarray:
     pass
 
 
-def check_valid_action(d_board, action, player) -> bool:
+def check_valid_action(d_board: np.ndarray, action: np.int8) -> bool:
+    """
+    Checks validity of the action applied on the board
+
+    :parameter d_board: the playing board of type np.ndarray
+    :parameter action : the column number where the next piece is to be placed.
+    :return: a boolean flag stating True if valid otherwise False
+    """
     return d_board[5, action] == NO_PLAYER
 
 
-def apply_player_action(d_board, action, player, copy=False) -> tuple:
+def apply_player_action(d_board: np.ndarray, action: np.int8, player: BoardPiece, copy=False) -> tuple:
+    """
+    Applies player action on the board
+
+    :parameter d_board: the playing board of type np.ndarray
+    :parameter action: the column number where the next piece is to be placed.
+    :parameter player: the player making the move
+    :parameter copy: Optional parameter stating if we want to make a copy of the board. This is used during the minimax algorithm to predict the future moves
+
+    :return: a boolean flag stating True if valid otherwise False
+    """
     # Check if we can place it in that column
-    if check_valid_action(d_board, action, player):
+    if check_valid_action(d_board, action):
         if copy:
             copied_board = np.copy(d_board)
         else:
@@ -65,7 +89,16 @@ def apply_player_action(d_board, action, player, copy=False) -> tuple:
     return copied_board, d_board
 
 
-def connected_four(d_board, player, last_action=None) -> bool:
+def connected_four(d_board: np.ndarray, player: BoardPiece, last_action=None) -> bool:
+    """
+    Check if connect 4 or a win sequence has formed in the board
+
+    :parameter d_board: the playing board of type np.ndarray
+    :parameter player: the player making the move
+    :parameter last_action: the last action on the board (optional parameter)
+
+    :return: a boolean flag stating True if connect 4 takes place otherwise False
+    """
     rows = d_board.shape[0]
     cols = d_board.shape[1]
     if not (last_action in np.arange(rows)):
@@ -94,10 +127,18 @@ def connected_four(d_board, player, last_action=None) -> bool:
                             d_board[i + 3, j - 3]:
                         return True
 
-                return False
+        return False
 
 
-def check_end_state(c4_board, player) -> GameState:
+def check_end_state(c4_board: np.ndarray, player: BoardPiece) -> GameState:
+    """
+    Applies player action on the board
+
+    :parameter c4_board: the playing board of type np.ndarray
+    :parameter player: the player making the move
+
+    :return: Whether there is a win , a draw or the match is still going on.
+    """
     if connected_four(c4_board, player):
         return GameState.IS_WIN
     elif check_board_full(c4_board):
@@ -106,7 +147,14 @@ def check_end_state(c4_board, player) -> GameState:
         return GameState.STILL_PLAYING
 
 
-def check_board_full(c4_board) -> bool:
+def check_board_full(c4_board: np.ndarray) -> bool:
+    """
+    Check if the board is full
+
+    :parameter c4_board: the playing board of type np.ndarray
+
+    :return: a boolean flag stating True if full otherwise False
+    """
     for row in range(6):
         for col in range(7):
             if c4_board[row, col] == NO_PLAYER:
@@ -115,14 +163,29 @@ def check_board_full(c4_board) -> bool:
     return True
 
 
-def get_free_row(d_board, action) -> int:
+def get_free_row(d_board: np.ndarray, action: np.int8) -> int:
+    """
+    Get the row that has free space
+
+    :parameter d_board: the playing board of type np.ndarray
+    :parameter action: the column number where the next piece is to be placed.
+
+    :return: the row which has free space
+    """
     for row in range(6):
         if d_board[row, action] == NO_PLAYER:
             return row
     return -1
 
 
-def get_free_columns(d_board) -> np.ndarray:
+def get_free_columns(d_board: np.ndarray) -> list:
+    """
+    Retrieve a list of free columns
+
+    :parameter d_board: the playing board of type np.ndarray
+
+    :return: returns a list of column index numbers.
+    """
     col_list = []
     for col in range(7):
         if d_board[5, col] == NO_PLAYER:
