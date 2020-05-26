@@ -1,6 +1,7 @@
 import numpy as np
-from connectn.common import BoardPiece
-import connectn.common as cm
+from agents.common.common import BoardPiece
+from agents.common import common as cm
+import pytest
 
 
 def test_initialize_game_state():
@@ -20,16 +21,6 @@ def test_pretty_print_board():
     test_board[0, 0] = cm.PLAYER1
     str_test_board = '\n'.join([str(row) for row in test_board[::-1]])
     assert pp_board.__eq__(str_test_board)
-
-
-'''def test_string_to_board():
-    board = cm.initialize_game_state()
-    pp_board = cm.pretty_print_board(board)
-    retrieved_board = cm.string_to_board(pp_board)
-    assert isinstance(retrieved_board, np.ndarray)
-    assert board.dtype == BoardPiece
-    assert board.shape == (6, 7)
-    assert np.all(board == 0)'''
 
 
 def test_valid_action_true():
@@ -64,6 +55,18 @@ def test_connected_four():
 def test_check_board_full():
     board = cm.initialize_game_state()
     assert ~cm.check_board_full(board)
+
+
+def test_check_board_full_true():
+    board = cm.initialize_game_state()
+    board[5, 0] = cm.PLAYER1
+    board[5, 1] = cm.PLAYER1
+    board[5, 2] = cm.PLAYER1
+    board[5, 3] = cm.PLAYER1
+    board[5, 4] = cm.PLAYER1
+    board[5, 5] = cm.PLAYER1
+    board[5, 6] = cm.PLAYER1
+    assert cm.check_board_full(board)
 
 
 def test_check_end_state_vertical():
@@ -109,9 +112,42 @@ def test_get_free_row():
     assert 1 == cm.get_free_row(board, 0)
 
 
+def test_get_free_row_negative():
+    board = np.ones((6, 7), dtype=BoardPiece)
+    assert -1 == cm.get_free_row(board, 5)
+
+
+def test_end_state_draw():
+    board = 5 * np.ones((6, 7), dtype=BoardPiece)
+    assert cm.GameState.IS_DRAW == cm.check_end_state(board, cm.PLAYER1)
+
+
 def test_get_free_column():
     board = cm.initialize_game_state()
     board[5, 0] = cm.PLAYER1
     board[5, 1] = cm.PLAYER2
     cols = np.array((2, 3, 4, 5, 6))
     assert np.all(np.equal(cols, cm.get_free_columns(board)))
+
+
+def test_connected_four_right_diagonal():
+    board = cm.initialize_game_state()
+    board[0, 0] = cm.PLAYER1
+    board[1, 1] = cm.PLAYER1
+    board[2, 2] = cm.PLAYER1
+    board[3, 3] = cm.PLAYER1
+    assert cm.connected_four(board, cm.PLAYER1)
+
+
+def test_apply_player_action_exception():
+    board = cm.initialize_game_state()
+    board[5, 6] = cm.PLAYER1
+    with pytest.raises(Exception, match='Cannot place player in that particular position'):
+        cm.apply_player_action(board, 6, cm.PLAYER2)
+
+
+def test_apply_player_action_copy():
+    board = cm.initialize_game_state()
+    cp, board = cm.apply_player_action(board, 6, cm.PLAYER1, True)
+    assert ~np.all(cp == board)
+    assert cp[0, 6] == 1

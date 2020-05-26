@@ -3,10 +3,14 @@ import numpy as np
 from typing import Callable, Tuple
 from typing import Optional
 
-BoardPiece = np.int8  # The data type of the board
-NO_PLAYER = BoardPiece(0)  # board[i, j] == NO_PLAYER where the position is empty
-PLAYER1 = BoardPiece(1)  # board[i, j] == PLAYER1 where player 1 has a piece
-PLAYER2 = BoardPiece(2)  # board[i, j] == PLAYER2 where player 2 has a piece
+# The data type of the board
+BoardPiece = np.int8
+# board[i, j] == NO_PLAYER where the position is empty
+NO_PLAYER = BoardPiece(0)
+# board[i, j] == PLAYER1 where player 1 has a piece
+PLAYER1 = BoardPiece(1)
+# board[i, j] == PLAYER2 where player 2 has a piece
+PLAYER2 = BoardPiece(2)
 
 PlayerAction = np.int8  # The column to be played
 
@@ -22,8 +26,10 @@ class GameState(Enum):
 
 
 GenMove = Callable[
-    [np.ndarray, BoardPiece, Optional[SavedState]],  # Arguments for the generate_move function
-    Tuple[PlayerAction, Optional[SavedState]]  # Return type of the generate_move function
+    # Arguments for the generate_move function
+    [np.ndarray, BoardPiece, Optional[SavedState]],
+    Tuple[PlayerAction, Optional[SavedState]]
+    # Return type of the generate_move function
 ]
 
 
@@ -46,10 +52,6 @@ def pretty_print_board(input_board: np.ndarray) -> str:
     return '\n'.join([str(row) for row in input_board[::-1]])
 
 
-def string_to_board(pp_board: str) -> np.ndarray:
-    pass
-
-
 def check_valid_action(d_board: np.ndarray, action: np.int8) -> bool:
     """
     Checks validity of the action applied on the board
@@ -61,14 +63,17 @@ def check_valid_action(d_board: np.ndarray, action: np.int8) -> bool:
     return d_board[5, action] == NO_PLAYER
 
 
-def apply_player_action(d_board: np.ndarray, action: np.int8, player: BoardPiece, copy=False) -> tuple:
+def apply_player_action(d_board: np.ndarray, action: np.int8,
+                        player: BoardPiece, copy=False) -> tuple:
     """
     Applies player action on the board
 
     :parameter d_board: the playing board of type np.ndarray
     :parameter action: the column number where the next piece is to be placed.
     :parameter player: the player making the move
-    :parameter copy: Optional parameter stating if we want to make a copy of the board. This is used during the minimax algorithm to predict the future moves
+    :parameter copy: Optional parameter stating \
+    if we want to make a copy of the board. This is used during \
+    the minimax algorithm to predict the future moves
 
     :return: a boolean flag stating True if valid otherwise False
     """
@@ -89,7 +94,8 @@ def apply_player_action(d_board: np.ndarray, action: np.int8, player: BoardPiece
     return copied_board, d_board
 
 
-def connected_four(d_board: np.ndarray, player: BoardPiece, last_action=None) -> bool:
+def connected_four(d_board: np.ndarray, player: BoardPiece,
+                   last_action=None) -> bool:
     """
     Check if connect 4 or a win sequence has formed in the board
 
@@ -97,7 +103,8 @@ def connected_four(d_board: np.ndarray, player: BoardPiece, last_action=None) ->
     :parameter player: the player making the move
     :parameter last_action: the last action on the board (optional parameter)
 
-    :return: a boolean flag stating True if connect 4 takes place otherwise False
+    :return: a boolean flag stating True \
+    if connect 4 takes place otherwise False
     """
     rows = d_board.shape[0]
     cols = d_board.shape[1]
@@ -106,24 +113,28 @@ def connected_four(d_board: np.ndarray, player: BoardPiece, last_action=None) ->
             for j in range(cols):
                 element = player
                 # check row
-                if j <= 3 and element == d_board[i, j + 1] and element == d_board[i, j + 2] and element == d_board[
-                    i, j + 3]:
+                if j <= 3 and element == d_board[i, j + 1] and \
+                        element == d_board[i, j + 2] and \
+                        element == d_board[i, j + 3]:
                     return True
 
                 # check column
-                if i <= 3 and element == d_board[i + 1, j] and element == d_board[i + 2, j] and element == d_board[
-                    i + 3, j]:
+                if i <= 3 and element == d_board[i + 1, j] and \
+                        element == d_board[i + 2, j] and \
+                        element == d_board[i + 3, j]:
                     return True
 
                 # right diagonal
                 if i <= 2 and j <= 3:
-                    if element == d_board[i + 1, j + 1] and element == d_board[i + 2, j + 2] and element == d_board[
-                        i + 3, j + 3]:
+                    if element == d_board[i + 1, j + 1] and \
+                            element == d_board[i + 2, j + 2] and \
+                            element == d_board[i + 3, j + 3]:
                         return True
 
                 # left diagonal
                 if i <= 2 and j >= 3:
-                    if element == d_board[i + 1, j - 1] and element == d_board[i + 2, j - 2] and element == \
+                    if element == d_board[i + 1, j - 1] and \
+                            element == d_board[i + 2, j - 2] and element == \
                             d_board[i + 3, j - 3]:
                         return True
 
@@ -155,10 +166,10 @@ def check_board_full(c4_board: np.ndarray) -> bool:
 
     :return: a boolean flag stating True if full otherwise False
     """
-    for row in range(6):
-        for col in range(7):
-            if c4_board[row, col] == NO_PLAYER:
-                return False
+
+    for col in range(7):
+        if c4_board[5, col] == NO_PLAYER:
+            return False
 
     return True
 

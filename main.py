@@ -1,14 +1,16 @@
 import time
 import numpy as np
 from typing import Optional, Callable
-from connectn.common import PlayerAction, BoardPiece, SavedState, GenMove, \
+from agents.common.common import PlayerAction, \
+    BoardPiece, SavedState, GenMove, \
     PLAYER1, PLAYER2, GameState, initialize_game_state, \
     apply_player_action, check_end_state, pretty_print_board
 from agents.agent_minimax import generate_move
 
 
 def user_move(
-        board: np.ndarray, _player: BoardPiece, saved_state: Optional[SavedState]
+        board: np.ndarray, _player: BoardPiece,
+        saved_state: Optional[SavedState]
 ):
     action = PlayerAction(-1)
     while not 0 <= action < board.shape[1]:
@@ -55,9 +57,10 @@ def human_vs_agent(
                 action, saved_state[player] = gen_move(
                     board.copy(), player, saved_state[player], *args
                 )
-                print('{} \'s action is {}'.format(player_name,action))
+                print('{} \'s action is {}'.format(player_name, action))
                 print(f"Move time: {time.time() - t0:.3f}s")
-                board, r_board = apply_player_action(board, action, player, True)
+                board, r_board = apply_player_action(board, action,
+                                                     player, True)
                 end_state = check_end_state(board, player)
                 if end_state != GameState.STILL_PLAYING:
                     print(pretty_print_board(board))
@@ -73,5 +76,5 @@ def human_vs_agent(
 
 
 if __name__ == "__main__":
-    #human_vs_agent(user_move)
+    # human_vs_agent(user_move)
     human_vs_agent(generate_move)

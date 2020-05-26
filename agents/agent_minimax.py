@@ -1,9 +1,10 @@
 import numpy as np
-import connectn.common as cn
+from agents.common import common as cn
 import math
 from typing import Optional
 
-#was struggling with switching between agent and user input in players so introduced two variables
+# was struggling with switching between agent and \
+# user input in players so introduced two variables
 
 AGENT = cn.NO_PLAYER
 HUMAN = cn.NO_PLAYER
@@ -11,7 +12,8 @@ GLOBAL_DEPTH = 3
 SCORE_DIC = {}
 
 
-def generate_move(board: np.ndarray, player: cn.BoardPiece, saved_state: Optional[cn.SavedState]) -> tuple:
+def generate_move(board: np.ndarray, player: cn.BoardPiece,
+                  saved_state: Optional) -> object:
     """
     Generate move function for the minimax agent
 
@@ -19,12 +21,13 @@ def generate_move(board: np.ndarray, player: cn.BoardPiece, saved_state: Optiona
     :parameter player: the player making the move
     :parameter saved_state : Optional parameter to use the SavedState
 
-    :return: a tuple containing column number and maximizing score for next move
+    :return: a tuple containing column number and \
+     maximizing score for next move
     """
     global AGENT
     global HUMAN
 
-    #assuming that this will always get called by AGENT
+    # assuming that this will always get called by AGENT
     AGENT = player
     if AGENT == cn.PLAYER1:
         HUMAN = cn.PLAYER2
@@ -34,13 +37,15 @@ def generate_move(board: np.ndarray, player: cn.BoardPiece, saved_state: Optiona
     assert not HUMAN == cn.NO_PLAYER
 
     col, minimax_score = minimax(board, 3, -math.inf, math.inf, True)
-    print('Score selected {} for col {}'.format(minimax_score, col))
+    print('Column selected {} with score {}'.format(col, minimax_score))
     return col, saved_state
 
 
 def score_center(board: np.ndarray, player: cn.BoardPiece) -> int:
     """
-    Scores the center column of the board. This is calculated differently as placing pieces on the center is considered a good move
+    Scores the center column of the board. \
+    This is calculated differently as placing pieces on the center is
+    considered a good move
 
     :parameter board: the playing board of type np.ndarray
     :parameter player: the player making the move
@@ -52,7 +57,7 @@ def score_center(board: np.ndarray, player: cn.BoardPiece) -> int:
     return count * 4
 
 
-def score_horizontal(board: np.ndarray, player: cn.BoardPiece) -> int:
+def score_row(board: np.ndarray, player: cn.BoardPiece) -> int:
     """
     Scores a row of the board.
 
@@ -86,7 +91,7 @@ def score_horizontal(board: np.ndarray, player: cn.BoardPiece) -> int:
     return score
 
 
-def score_vertical(board: np.ndarray, player: cn.BoardPiece) -> int:
+def score_column(board: np.ndarray, player: cn.BoardPiece) -> int:
     """
     Scores the column of the board.
 
@@ -119,7 +124,7 @@ def score_vertical(board: np.ndarray, player: cn.BoardPiece) -> int:
     return score
 
 
-def score_positive_diagonal(board: np.ndarray, player: cn.BoardPiece) -> int:
+def score_right_diagonal(board: np.ndarray, player: cn.BoardPiece) -> int:
     """
     Scores the right diagonal of the board
 
@@ -152,7 +157,7 @@ def score_positive_diagonal(board: np.ndarray, player: cn.BoardPiece) -> int:
     return score
 
 
-def score_negative_diagonal(board: np.ndarray, player: cn.BoardPiece) -> int:
+def score_left_diagonal(board: np.ndarray, player: cn.BoardPiece) -> int:
     """
     Scores the left diagonal of the board.
 
@@ -195,46 +200,50 @@ def heuristic_scoring(board: np.ndarray, player: cn.BoardPiece) -> int:
     :return: The heuristic score of the current board state for a player.
     """
     value = 0
-    # It is considered that center placement is a very good starting , so I am giving different
+    # It is considered that center placement is a very good starting , \
+    # so I am giving different
     # calculation for center compared to other vertical check
     value += score_center(board, player)
 
     # check horizontal
-    value += score_horizontal(board, player)
+    value += score_row(board, player)
 
     # check vertical
-    value += score_vertical(board, player)
+    value += score_column(board, player)
 
     # check positive diagonal
-    value += score_positive_diagonal(board, player)
+    value += score_right_diagonal(board, player)
 
     # check negative diagonal
-    value += score_negative_diagonal(board, player)
+    value += score_left_diagonal(board, player)
 
     return value
 
 
-def minimax(board: np.ndarray, depth: int, alpha: int, beta: int, maximizing_player: bool) -> tuple:
+def minimax(board: np.ndarray, depth: int, alpha: int,
+            beta: int, maximizing_player: bool) -> tuple:
     """
-    Applies the minimax algorithm on the board to give a suggested column number and maximising/minimising score
+    Applies the minimax algorithm on the board to
+    give a suggested column number and maximising/minimising score
 
     :parameter board: the playing board of type np.ndarray
-    :parameter depth: the depth till which to evaluate the board with the algorithm
+    :parameter depth: the depth till which to evaluate the
+     board with the algorithm
     :parameter alpha: the minimum score the maximising player is assured of
     :parameter beta: the maximum score the minimising player is assured of
-    :parameter maximizing_player: boolean flag suggesting if the algorithm needs to maximise or minimise
+    :parameter maximizing_player: boolean flag suggesting if the
+    algorithm needs to maximise or minimise
 
     :return: The column and computed maximum/minimum score
     """
     global SCORE_DIC
     # if depth is 0 or node is terminal, return heuristic value of the node
-    if cn.connected_four(board, AGENT) == cn.GameState.IS_WIN:
-        # This checks if the current state of the board is draw for any of the two players
+    if cn.connected_four(board, AGENT):
         return None, 10000
-    if cn.connected_four(board, HUMAN) == cn.GameState.IS_WIN:
+    if cn.connected_four(board, HUMAN):
         return None, -10000
     # Check if there is a draw
-    if cn.connected_four(board, AGENT) == cn.GameState.IS_DRAW:
+    if cn.check_end_state(board, AGENT) == cn.GameState.IS_DRAW:
         return None, 0
     if depth == 0:
         return None, heuristic_scoring(board, AGENT)
