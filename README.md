@@ -6,9 +6,9 @@ Sudeshna Bora
 
 ## Code Coverage<br>
 Please check the following files (in htmlcov folder) for code coverage:
-1. index.html (for complete overview)<br>
-2. ![Common.py](https://htmlpreview.github.io/?https://github.com/SudeshnaBora/agent0/blob/master/htmlcov/agents_common_common_py.html)<br>
-3. agents_common_common_py.html (for common functionality overview)
+1. [Complete overview](https://htmlpreview.github.io/?https://github.com/SudeshnaBora/agent0/blob/master/htmlcov/index.html)<br>
+2. [Coverage for common.py](https://htmlpreview.github.io/?https://github.com/SudeshnaBora/agent0/blob/master/htmlcov/agents_common_common_py.html)<br>
+3. [Coverage for agent_minimax.py](https://htmlpreview.github.io/?https://github.com/SudeshnaBora/agent0/blob/master/htmlcov/agents_agent_minimax_py.html)<br> 
 
 <b>To run coverage locally</b>
 
