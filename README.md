@@ -3,8 +3,9 @@
 ## Author<br>
 Sudeshna Bora
 
-
-## Code Coverage<br>
+### Code Quality 
+Used pep8 
+### Code Coverage<br>
 Please check the following files (in htmlcov folder) for code coverage:
 1. [Complete overview](https://htmlpreview.github.io/?https://github.com/SudeshnaBora/agent0/blob/master/htmlcov/index.html)<br>
 2. [Coverage for common.py](https://htmlpreview.github.io/?https://github.com/SudeshnaBora/agent0/blob/master/htmlcov/agents_common_common_py.html)<br>
