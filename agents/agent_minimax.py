@@ -63,9 +63,11 @@ def score_horizontal(board: np.ndarray, player: cn.BoardPiece) -> int:
     """
     score = 0
     current_player = player
-    opposite_player = player
     if current_player == cn.PLAYER1:
         opposite_player = cn.PLAYER2
+    else:
+        opposite_player = cn.PLAYER1
+    # loop through all rows. I may change it to get only the last open row
     for i in range(6):
         row = board[i, :]
         for col in range(4):
@@ -78,9 +80,9 @@ def score_horizontal(board: np.ndarray, player: cn.BoardPiece) -> int:
             if count == 3 and empty_count == 1:
                 score += 5
             if count == 2 and empty_count == 1:
-                count += 2
+                score += 2
             if opponent_count == 3 and empty_count == 1:
-                count -= 4
+                score -= 4
     return score
 
 
@@ -111,9 +113,9 @@ def score_vertical(board: np.ndarray, player: cn.BoardPiece) -> int:
             if count == 3 and empty_count == 1:
                 score += 5
             if count == 2 and empty_count == 1:
-                count += 2
+                score += 2
             if opponent_count == 3 and empty_count == 1:
-                count -= 4
+                score -= 4
     return score
 
 
@@ -144,9 +146,9 @@ def score_positive_diagonal(board: np.ndarray, player: cn.BoardPiece) -> int:
             if count == 3 and empty_count == 1:
                 score += 5
             if count == 2 and empty_count == 1:
-                count += 2
+                score += 2
             if opponent_count == 3 and empty_count == 1:
-                count -= 4
+                score -= 4
     return score
 
 
@@ -177,9 +179,9 @@ def score_negative_diagonal(board: np.ndarray, player: cn.BoardPiece) -> int:
             if count == 3 and empty_count == 1:
                 score += 5
             if count == 2 and empty_count == 1:
-                count += 2
+                score += 2
             if opponent_count == 3 and empty_count == 1:
-                count -= 4
+                score -= 4
     return score
 
 
