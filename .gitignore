@@ -4,3 +4,4 @@
 .idea/
 .pytest_cache/
 venv/
+agents/tests/.pytest_cache/
