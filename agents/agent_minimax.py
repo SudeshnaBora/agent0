@@ -53,8 +53,7 @@ def score_center(board: np.ndarray, player: cn.BoardPiece) -> int:
     :return: The score of the center column
     """
     center_col = board[:, 3]
-    count = list(center_col).count(player)
-    return count * 4
+    return list(center_col).count(player) * 4
 
 
 def score_row(board: np.ndarray, player: cn.BoardPiece) -> int:
@@ -88,6 +87,8 @@ def score_row(board: np.ndarray, player: cn.BoardPiece) -> int:
                 score += 2
             if opponent_count == 3 and empty_count == 1:
                 score -= 4
+            if opponent_count == 4:
+                score -= 100
     return score
 
 
@@ -121,6 +122,8 @@ def score_column(board: np.ndarray, player: cn.BoardPiece) -> int:
                 score += 2
             if opponent_count == 3 and empty_count == 1:
                 score -= 4
+            if opponent_count == 4:
+                score -= 100
     return score
 
 
@@ -154,6 +157,8 @@ def score_right_diagonal(board: np.ndarray, player: cn.BoardPiece) -> int:
                 score += 2
             if opponent_count == 3 and empty_count == 1:
                 score -= 4
+            if opponent_count == 4:
+                score -= 100
     return score
 
 
@@ -187,6 +192,8 @@ def score_left_diagonal(board: np.ndarray, player: cn.BoardPiece) -> int:
                 score += 2
             if opponent_count == 3 and empty_count == 1:
                 score -= 4
+            if opponent_count == 4:
+                score -= 100
     return score
 
 

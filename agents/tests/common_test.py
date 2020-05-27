@@ -23,11 +23,13 @@ def test_pretty_print_board():
     assert pp_board.__eq__(str_test_board)
 
 
+# test to check if given player action is valid (positive case)
 def test_valid_action_true():
     board = cm.initialize_game_state()
     assert cm.check_valid_action(board, 6)
 
 
+# checks if the given player action is valid (invalid/negative case)
 def test_valid_action_false():
     board = cm.initialize_game_state()
     board[5, 0] = cm.PLAYER1
@@ -52,11 +54,14 @@ def test_connected_four():
     assert cm.connected_four(board, cm.PLAYER1)
 
 
-def test_check_board_full():
+# checks if the board is full (negative case)
+def test_check_board_full_false():
     board = cm.initialize_game_state()
     assert ~cm.check_board_full(board)
 
 
+# checks if board is full (positive case). Leveraging the idea that in \
+# case of full board , the topmost row will not be empty
 def test_check_board_full_true():
     board = cm.initialize_game_state()
     board[5, 0] = cm.PLAYER1
@@ -69,7 +74,7 @@ def test_check_board_full_true():
     assert cm.check_board_full(board)
 
 
-def test_check_end_state_vertical():
+def test_check_end_state_column():
     board = cm.initialize_game_state()
     board[0, 0] = cm.PLAYER1
     board[1, 0] = cm.PLAYER1
@@ -79,7 +84,7 @@ def test_check_end_state_vertical():
     assert not cm.GameState.IS_WIN == cm.check_end_state(board, cm.PLAYER2)
 
 
-def test_check_end_state_horizontal():
+def test_check_end_state_row():
     board = cm.initialize_game_state()
     board[0, 0] = cm.PLAYER1
     board[0, 1] = cm.PLAYER1
@@ -112,11 +117,13 @@ def test_get_free_row():
     assert 1 == cm.get_free_row(board, 0)
 
 
+# checks if any row is free (negative case).
 def test_get_free_row_negative():
     board = np.ones((6, 7), dtype=BoardPiece)
     assert -1 == cm.get_free_row(board, 5)
 
 
+# Testing the IS_DRAW scenario
 def test_end_state_draw():
     board = 5 * np.ones((6, 7), dtype=BoardPiece)
     assert cm.GameState.IS_DRAW == cm.check_end_state(board, cm.PLAYER1)
@@ -151,3 +158,13 @@ def test_apply_player_action_copy():
     cp, board = cm.apply_player_action(board, 6, cm.PLAYER1, True)
     assert ~np.all(cp == board)
     assert cp[0, 6] == 1
+
+
+def test_connected4_column_false():
+    board = cm.initialize_game_state()
+    board[0, 1] = cm.PLAYER2
+    board[1, 1] = cm.PLAYER1
+    board[2, 1] = cm.PLAYER1
+    board[3, 1] = cm.PLAYER1
+    assert ~cm.connected_four(board, cm.PLAYER1)
+

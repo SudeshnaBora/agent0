@@ -113,29 +113,33 @@ def connected_four(d_board: np.ndarray, player: BoardPiece,
             for j in range(cols):
                 element = player
                 # check row
-                if j <= 3 and element == d_board[i, j + 1] and \
+                if j <= 3 and element == d_board[i, j] and \
+                        element == d_board[i, j + 1] and \
                         element == d_board[i, j + 2] and \
                         element == d_board[i, j + 3]:
                     return True
 
                 # check column
-                if i <= 3 and element == d_board[i + 1, j] and \
+                if i <= 2 and element == d_board[i, j] \
+                        and element == d_board[i + 1, j] and \
                         element == d_board[i + 2, j] and \
                         element == d_board[i + 3, j]:
                     return True
 
                 # right diagonal
                 if i <= 2 and j <= 3:
-                    if element == d_board[i + 1, j + 1] and \
+                    if element == d_board[i, j] and \
+                            element == d_board[i + 1, j + 1] and \
                             element == d_board[i + 2, j + 2] and \
                             element == d_board[i + 3, j + 3]:
                         return True
 
                 # left diagonal
                 if i <= 2 and j >= 3:
-                    if element == d_board[i + 1, j - 1] and \
-                            element == d_board[i + 2, j - 2] and element == \
-                            d_board[i + 3, j - 3]:
+                    if element == d_board[i, j] and \
+                            element == d_board[i + 1, j - 1] and \
+                            element == d_board[i + 2, j - 2] and \
+                            element == d_board[i + 3, j - 3]:
                         return True
 
         return False
