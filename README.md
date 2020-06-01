@@ -14,9 +14,7 @@ This is given a very high value (in my case a 100).
 
 3. Possibility of connecting 2 with an open slot near it.
 
-4. Special value is given to the center column. 
-
-5. Scores are deducted if the opponent has a connect4 or connect3. 
+4. Scores are deducted if the opponent has a connect4 or connect3. 
 Though connect 4 scenario should not occur. Keeping it as I would latter forget
 why I didn't keep a check for connected 4
 
@@ -40,5 +38,6 @@ pytest --cov --cov-report html
 
 ### Sources
 
-1. https://en.wikipedia.org/wiki/Minimax#Pseudocode
+1. https://en.wikipedia.org/wiki/Alpha%E2%80%93beta_pruning#Pseudocode
 2. https://www.researchgate.net/publication/331552609_Research_on_Different_Heuristics_for_Minimax_Algorithm_Insight_from_Connect-4_Game
+3. Took help for the left diagonal heuristic scoring if condition. I am not able to find the blog for the same.
