@@ -3,12 +3,6 @@ from agents.common import common as cm
 import numpy as np
 
 
-def test_score_center_column():
-    board = cm.initialize_game_state()
-    board[0, 3] = cm.PLAYER1
-    assert 4 == agent.score_center(board, cm.PLAYER1)
-
-
 def test_score_row():
     board = cm.initialize_game_state()
     board[0, 3] = cm.PLAYER1
@@ -45,7 +39,7 @@ def test_heuristic_scoring():
     board = cm.initialize_game_state()
     board[0, 3] = cm.PLAYER1
     board[1, 3] = cm.PLAYER2
-    assert 4 == agent.heuristic_scoring(board, cm.PLAYER1)
+    assert 0 == agent.heuristic_scoring(board, cm.PLAYER1)
 
 
 def test_minimax():

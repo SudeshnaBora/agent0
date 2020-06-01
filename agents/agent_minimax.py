@@ -8,8 +8,8 @@ from typing import Optional
 
 AGENT = cn.NO_PLAYER
 HUMAN = cn.NO_PLAYER
+# depth of the algorithm
 GLOBAL_DEPTH = 3
-SCORE_DIC = {}
 
 
 def generate_move(board: np.ndarray, player: cn.BoardPiece,
@@ -36,24 +36,9 @@ def generate_move(board: np.ndarray, player: cn.BoardPiece,
 
     assert not HUMAN == cn.NO_PLAYER
 
-    col, minimax_score = minimax(board, 3, -math.inf, math.inf, True)
+    col, minimax_score = minimax(board, GLOBAL_DEPTH, -math.inf, math.inf, True)
     print('Column selected {} with score {}'.format(col, minimax_score))
     return col, saved_state
-
-
-def score_center(board: np.ndarray, player: cn.BoardPiece) -> int:
-    """
-    Scores the center column of the board. \
-    This is calculated differently as placing pieces on the center is
-    considered a good move
-
-    :parameter board: the playing board of type np.ndarray
-    :parameter player: the player making the move
-
-    :return: The score of the center column
-    """
-    center_col = board[:, 3]
-    return list(center_col).count(player) * 4
 
 
 def score_row(board: np.ndarray, player: cn.BoardPiece) -> int:
@@ -207,21 +192,17 @@ def heuristic_scoring(board: np.ndarray, player: cn.BoardPiece) -> int:
     :return: The heuristic score of the current board state for a player.
     """
     value = 0
-    # It is considered that center placement is a very good starting , \
-    # so I am giving different
-    # calculation for center compared to other vertical check
-    value += score_center(board, player)
 
     # check horizontal
     value += score_row(board, player)
 
-    # check vertical
+    # check column
     value += score_column(board, player)
 
-    # check positive diagonal
+    # check right diagonal
     value += score_right_diagonal(board, player)
 
-    # check negative diagonal
+    # check left diagonal
     value += score_left_diagonal(board, player)
 
     return value
@@ -243,8 +224,8 @@ def minimax(board: np.ndarray, depth: int, alpha: int,
 
     :return: The column and computed maximum/minimum score
     """
-    global SCORE_DIC
     # if depth is 0 or node is terminal, return heuristic value of the node
+    # if terminal check if it is win , loss or draw
     if cn.connected_four(board, AGENT):
         return None, 10000
     if cn.connected_four(board, HUMAN):
@@ -252,38 +233,48 @@ def minimax(board: np.ndarray, depth: int, alpha: int,
     # Check if there is a draw
     if cn.check_end_state(board, AGENT) == cn.GameState.IS_DRAW:
         return None, 0
+    # if depth is 0, calculate heuristic scoring
     if depth == 0:
         return None, heuristic_scoring(board, AGENT)
 
     # get a list of columns open for placement
     col_list = cn.get_free_columns(board)
     if maximizing_player:
+        # value = -infinity
         value = -math.inf
         column = np.random.choice(col_list)
+        # for child node (interpreted it as available columns)
         for col in col_list:
-            b_copy = board.copy()
-            cn.apply_player_action(b_copy, col, AGENT)
+            # apply a random column to check the minimax
+            b_copy, ori_board = cn.apply_player_action(board, col, AGENT, True)
+            # get the score only
             new_score = minimax(b_copy, depth - 1, alpha, beta, False)[1]
+            # personal debugging
             if depth == GLOBAL_DEPTH:
                 print('For col {}, the score is {}'.format(col, new_score))
+            # use the new score if higher
             if new_score > value:
                 value = new_score
                 column = col
+            # prune in the maximising node
             alpha = max(alpha, value)
             if alpha >= beta:
                 break
         return column, value
 
+    # minimising branch
     else:
+        # value = +infinity
         value = math.inf
         column = np.random.choice(col_list)
         for col in col_list:
-            b_copy = board.copy()
-            cn.apply_player_action(b_copy, col, HUMAN)
+            b_copy, ori_board = cn.apply_player_action(board, col, HUMAN, True)
             new_score = minimax(b_copy, depth - 1, alpha, beta, True)[1]
+            # get the minimizing score
             if new_score < value:
                 value = new_score
                 column = col
+            # do beta pruning check
             beta = min(beta, value)
             if alpha >= beta:
                 break
