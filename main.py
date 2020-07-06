@@ -5,7 +5,8 @@ from agents.common.common import PlayerAction, \
     BoardPiece, SavedState, GenMove, \
     PLAYER1, PLAYER2, GameState, initialize_game_state, \
     apply_player_action, check_end_state, pretty_print_board
-from agents.agent_minimax import generate_move
+# from agents.agent_minimax import generate_move
+from agents.agent_mcts.agent_mcts import generate_move
 
 
 def user_move(

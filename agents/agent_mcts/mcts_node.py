@@ -1,51 +1,82 @@
 import numpy as np
+from agents.common import common
 
 '''
   The MCTS node implementation
 '''
 
 
-class MctsNode:
+class mcts_node:
 
-    def __init__(self, state, parent=None):
-        # the number of visits to this node. As this class would be initialised
-        # on first visit so initialising with 1
-        self.visits = 1
-        # the reward calculated with this node after simulation
-        self.reward = 0.0
-        # it is the ndArray board of this Node
-        self.state = state
-        # array storing children of this node
-        self.children = []
-        # array storing the moves to the children of the node
-        self.children_move = []
-        # node to store the parent of this node
+    def __init__(self, move=None, parent=None, state=None, player=None):
+        # the parent of this node
         self.parent = parent
+        # the move leading to this state
+        self.move = move
+        # the board associated with this state
+        self.state = state
+        # the player connected with this board
+        self.player = player
+        self.num_wins = 0
+        self.total_visits = 0
+        self.children = []
+        self.open_moves = self.get_open_moves()
 
-    def set_children(self, child, move):
-        """
-        Setter function to set the children and the children_move attributes
-        :param child: the child node of the current node
-        :param move: the move that leads to the child node
+    def get_open_moves(self) -> np.ndarray:
+        '''
+        Getter function to obtain possible open columns
         :return:
-        """
-        # initialising the child node as it has been visited
-        child_node = MctsNode(child, self)
-        # appending this child node to the parent node's child attribute
-        self.children.append(child_node)
-        # appending the move leading to the child node
-        self.children_move.append(move)
+        An array of column numbers
+        '''
 
-    def set_score(self, reward):
+        if common.check_end_state(self.state, self.player) == common.GameState.IS_WIN:
+            return np.array([])
+        else:
+            return np.array(common.get_free_columns(self.state))
+
+    def set_visit_and_win(self, result: int):
         """
-        Setter to update the reward and visits
+        Update the win and visits value of a node
+        :param result: 0 if the game ended in a draw, 1 if the player won adn -1 if the opponent won
+        """
+        self.total_visits += 1
+        self.num_wins += result
+
+    def ucb_score(self, child, exploration_param=np.sqrt(2)) -> np.ndarray:
+        """
+        Calculates the ucb score
+        :param child: the child to calculate the node
+        :param exploration_param: Scaling parameter
         :return:
+        the ucb score of the child
         """
-        self.reward += reward
-        self.visits += 1
+        return child.num_wins / child.total_visits + exploration_param * np.sqrt(
+            np.log(self.total_visits) / child.total_visits)
 
-    def check_fully_explored(self) -> bool:
+    def selection(self):
         """
-        Check if the board has been fully explored
-        :return: boolean flag with true if yes otherwise false
+        Selects the next node to expand
+        :return:
+        The child node with the largest UCB1 value
         """
+        return sorted(self.children, key=self.ucb_score)[-1]
+
+    def expansion(self, action: common.PlayerAction):
+        """
+        :param action: Action to apply in order to expand a node
+        :return: Child after node expansion (The board of the child node
+        corresponds to the board of the parent after the action was applied)
+        """
+        opponent = common.PLAYER1
+        if self.player == common.PLAYER1:
+            opponent = common.PLAYER2
+        # Apply the action to the board of the parent node
+        new_board, original_board = common.apply_player_action(self.state.copy(), action, opponent)
+        # Create a new child node with that action and board
+        child = mcts_node(move=action, parent=self, state=new_board, player=opponent)
+        # Append the created child to the children of the parent
+        self.children.append(child)
+        # Remove the action from the untried actions from the parent
+        self.open_moves = np.setdiff1d(self.open_moves, action)
+
+        return child
