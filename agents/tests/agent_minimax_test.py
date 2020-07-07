@@ -1,4 +1,4 @@
-import agents.agent_minimax as agent
+import agents.agent_minimax.agent_minimax as agent
 from agents.common import common as cm
 import numpy as np
 

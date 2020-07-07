@@ -23,11 +23,11 @@ class mcts_node:
         self.open_moves = self.get_open_moves()
 
     def get_open_moves(self) -> np.ndarray:
-        '''
+        """
         Getter function to obtain possible open columns
         :return:
         An array of column numbers
-        '''
+        """
 
         if common.check_end_state(self.state, self.player) == common.GameState.IS_WIN:
             return np.array([])
@@ -42,24 +42,22 @@ class mcts_node:
         self.total_visits += 1
         self.num_wins += result
 
-    def ucb_score(self, child, exploration_param=np.sqrt(2)) -> np.ndarray:
-        """
-        Calculates the ucb score
-        :param child: the child to calculate the node
-        :param exploration_param: Scaling parameter
-        :return:
-        the ucb score of the child
-        """
-        return child.num_wins / child.total_visits + exploration_param * np.sqrt(
-            np.log(self.total_visits) / child.total_visits)
-
     def selection(self):
         """
         Selects the next node to expand
         :return:
         The child node with the largest UCB1 value
         """
-        return sorted(self.children, key=self.ucb_score)[-1]
+        candidate_child_node = None
+        candidate_child_score = - 1000000
+        for child in self.children:
+            score = child.num_wins / child.total_visits + np.sqrt(2) * np.sqrt(
+                np.log(self.total_visits) / child.total_visits)
+            if score > candidate_child_score:
+                candidate_child_node = child
+                candidate_child_score = score
+
+        return candidate_child_node
 
     def expansion(self, action: common.PlayerAction):
         """
@@ -67,13 +65,10 @@ class mcts_node:
         :return: Child after node expansion (The board of the child node
         corresponds to the board of the parent after the action was applied)
         """
-        opponent = common.PLAYER1
-        if self.player == common.PLAYER1:
-            opponent = common.PLAYER2
         # Apply the action to the board of the parent node
-        new_board, original_board = common.apply_player_action(self.state.copy(), action, opponent)
+        new_board, original_board = common.apply_player_action(self.state.copy(), action, self.player)
         # Create a new child node with that action and board
-        child = mcts_node(move=action, parent=self, state=new_board, player=opponent)
+        child = mcts_node(move=action, parent=self, state=new_board, player=self.player)
         # Append the created child to the children of the parent
         self.children.append(child)
         # Remove the action from the untried actions from the parent
