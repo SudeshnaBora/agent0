@@ -42,7 +42,7 @@ def test_child_selection():
     child_node02.num_wins = 25
     children_array = [child_node01, child_node02]
     current_node.children = children_array
-    assert child_node01.__eq__(current_node.selection())
+    assert child_node01.__eq__(current_node.select_next_node())
 
 
 def test_expansion():
@@ -52,7 +52,7 @@ def test_expansion():
     current_node.open_moves = [0, 5]
     assert len(current_node.open_moves) == 2
     assert len(current_node.children) == 0
-    child_node = current_node.expansion(5)
+    child_node = current_node.expand_node(5)
     assert len(current_node.open_moves) == 1
     assert len(current_node.children) == 1
     assert current_node.open_moves[0] == 0

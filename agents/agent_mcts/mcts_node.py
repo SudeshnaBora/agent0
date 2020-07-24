@@ -42,7 +42,7 @@ class mcts_node:
         self.total_visits += 1
         self.num_wins += result
 
-    def selection(self):
+    def select_next_node(self):
         """
         Selects the next node to expand
         :return:
@@ -59,16 +59,19 @@ class mcts_node:
 
         return candidate_child_node
 
-    def expansion(self, action: common.PlayerAction):
+    def expand_node(self, action: common.PlayerAction):
         """
         :param action: Action to apply in order to expand a node
-        :return: Child after node expansion (The board of the child node
+        :return: Child after node expand_node (The board of the child node
         corresponds to the board of the parent after the action was applied)
         """
         # Apply the action to the board of the parent node
-        new_board, original_board = common.apply_player_action(self.state.copy(), action, self.player)
+        opponent = common.PLAYER1
+        if self.player == common.PLAYER1:
+            opponent = common.PLAYER2
+        new_board, original_board = common.apply_player_action(self.state.copy(), action, opponent)
         # Create a new child node with that action and board
-        child = mcts_node(move=action, parent=self, state=new_board, player=self.player)
+        child = mcts_node(move=action, parent=self, state=new_board, player=opponent)
         # Append the created child to the children of the parent
         self.children.append(child)
         # Remove the action from the untried actions from the parent

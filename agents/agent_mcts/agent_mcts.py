@@ -6,7 +6,7 @@ import time
 
 PLAYER = cn.NO_PLAYER
 OPPONENT = cn.NO_PLAYER
-GLOBAL_TIME = 5
+GLOBAL_TIME = 50
 
 
 def generate_move(board: np.ndarray, player: cn.BoardPiece, saved_state: Optional[cn.SavedState]) \
@@ -43,7 +43,7 @@ def select_node(node: mcts_node.mcts_node) -> mcts_node.mcts_node:
     """
     # This will go down the tree till a leaf node or an unexpanded node is found
     while not np.any(node.open_moves) and node.children != []:
-        node = node.selection()
+        node = node.select_next_node()
     return node
 
 
@@ -57,7 +57,7 @@ def explore_node(node: mcts_node.mcts_node) -> mcts_node.mcts_node:
     if np.any(node.open_moves):
         # Choose a random action from available moves
         action = np.random.choice(node.open_moves)
-        node = node.expansion(action)
+        node = node.expand_node(action)
     return node
 
 
@@ -65,7 +65,7 @@ def simulate_game(node: mcts_node.mcts_node) -> tuple:
     """
     Simulate the game of the current node
     :param node: The MCTS node
-    :return:
+    :return: tuple containing details if a player has won the game during simulation
     """
     board = node.state.copy()
     win = False
@@ -85,7 +85,7 @@ def simulate_game(node: mcts_node.mcts_node) -> tuple:
     return win, current_player
 
 
-def backpropagation(node:mcts_node.mcts_node, current_player: np.int8, win: bool):
+def back_propagation(node:mcts_node.mcts_node, current_player: np.int8, win: bool):
     """
 
     :param node: The MCTS node
@@ -99,8 +99,7 @@ def backpropagation(node:mcts_node.mcts_node, current_player: np.int8, win: bool
             result = -1  # The player lost against the opponent
     else:
         result = 0  # Game ended in a draw
-    # Go up the tree until reaching the root node and update the visits and wins property of
-    # each node on the way using the result
+    # update each node in this tree expansion with the results
     while node is not None:
         node.set_visit_and_win(result)
         node = node.parent
@@ -113,39 +112,36 @@ def MCTS(board: np.ndarray) -> cn.PlayerAction:
     :return: Column in which player wants to make his move (chosen using MCTS)
     """
     # initialise root node to start the algorithm
-    root_node = mcts_node.mcts_node(state=board, player=PLAYER)
+    root = mcts_node.mcts_node(state=board, player=PLAYER)
 
-    # set a limit to MCTS simulation
     global GLOBAL_TIME
-    end_time = time.time() + GLOBAL_TIME
-    while time.time() < end_time:
+    # defining the limiting factor to get out of the loop
+    end = time.time() + GLOBAL_TIME
+    while time.time() < end:
 
         # Start at the root node at each iteration
-        node = root_node
+        node = root
 
-        # Step 1: selection - this selects a terminal node or an unexplored node
+        # Step 1: select_next_node - this selects a terminal node or an unexplored node
         node = select_node(node)
 
         # Step 2: Explore the node that is selected
         node = explore_node(node)
 
         # Step 3 : Simulation
-        win, current_player = simulate_game(node)
+        win_game_flag, current_player = simulate_game(node)
 
         # Step 4: Back propagation
-        backpropagation(node, win, current_player)
+        back_propagation(node, win_game_flag, current_player)
 
-    best_score = -np.infty
-    for child in root_node.children:
-        # Check if one child is a win --> If so return the action (make sure that the agent takes the
-        # immediate win possibility)
+    max_score = - 10000000
+    selected_column = - 1
+    for child in root.children:
         if cn.connected_four(child.state, child.player):
             return child.move
-        # If no child is a win, compute the win/visit ratio and return the action of the child with the
-        # highest ratio
         else:
             score = child.num_wins / child.total_visits
-            if score > best_score:
-                best_action = child.move
-                best_score = score
-    return best_action
+            if score > max_score:
+                selected_column = child.move
+                max_score = score
+    return selected_column

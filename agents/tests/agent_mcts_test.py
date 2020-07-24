@@ -23,4 +23,11 @@ def test_generate_move_winning():
     assert action == 3
 
 
+def test_backpropagation():
+    board = cm.initialize_game_state()
+    current_node = node.mcts_node(state=board)
+    agent.back_propagation(current_node, cm.PLAYER1, False)
+
+
+
 
