@@ -1,9 +1,17 @@
-# Connect 4 with minimax algorithm using alpha beta pruning
+# Connect 4
+
+Algorithms used :-
+1. Minimax algorithm
+2. Monte Carlo Tree Search.
 
 ### Author<br>
 Sudeshna Bora
 
-### Algorithm for heuristic
+### Minimax Algorithm
+
+The minimax algorithm is a recursive algorithm whose goal is to minimise the potential loss for the worst case scenario for the player and maximise the minimum gain for the player. The output of the minimax algorithm is to give us the column and the probable maximum gain we can get by making that move. The scoring in the minimax algorithm depends on a heuristic scoring algorithm (described below).
+
+#### Algorithm for heuristic
 
 The heuristic scoring is divided into the following categories :-
 
@@ -17,6 +25,23 @@ This is given a very high value (in my case a 100).
 4. Scores are deducted if the opponent has a connect4 or connect3. 
 Though connect 4 scenario should not occur. Keeping it as I would latter forget
 why I didn't keep a check for connected 4
+
+### Monte Carlo Tree Search 
+
+The Monte Carlo method is a heuristic search algorithm. In case of connect4 it analyses the most promising column expanding the search tree for the probable moves search space. The selection of the next move for expansion is based on randomness. The application of Monte Carlo tree search in games is based on many playouts. The game is played out to the very end by selecting moves at random. By the end of the playout, a weight is assigned to the node. This algorithm does away with the necessity of using a heuristic algorithm. The MCTS backs on the principle of **exploration** and **exploitation**.
+
+#### Steps in MCTS algorithm 
+
+1. **Selection:**  Select a node and expand it till a Leaf node is reached. A leaf node is a not yet expanded node. 
+2. **Expansion:**  Expand the leaf node by taking into account all possible child nodes of this node and choosing one in random from that.
+3. **Simulation:** This is the playout portion of the MCTS algorithm.
+4. **Backpropagation:** After the playout, the information of the win/loss is propagated back up. 
+
+A important aspect of MCTS is to balance the exploration and exploitation of prior knowledge. I have used the **Upper Confidence bound** function for this. This is defined as :-
+
+**(no.of win of this node/ no. of simulation of this node) + exploration parameter * square root (ln(no.of total simulation)/no. of simulation of this node)**
+
+A known disadvantage of MCTS is sometimes a good move can be ignored due to lack of exploration.
 
 ### Code Quality 
 
