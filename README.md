@@ -49,10 +49,14 @@ pep8
 
 ### Code Coverage<br>
 
+**Currently all the files and lines of codes are covered and is at 100% except main.py**
+
 Please check the following files (in htmlcov folder) for code coverage:
 1. [Complete overview](https://htmlpreview.github.io/?https://github.com/SudeshnaBora/agent0/blob/master/htmlcov/index.html)<br>
 2. [Coverage for common.py](https://htmlpreview.github.io/?https://github.com/SudeshnaBora/agent0/blob/master/htmlcov/agents_common_common_py.html)<br>
-3. [Coverage for agent_minimax.py](https://htmlpreview.github.io/?https://github.com/SudeshnaBora/agent0/blob/master/htmlcov/agents_agent_minimax_py.html)<br> 
+3. [Coverage for agent_minimax.py](https://htmlpreview.github.io/?https://github.com/SudeshnaBora/agent0/blob/master/htmlcov/agents_agent_minimax_py.html)<br>
+4. [Coverage for mcts algorithm](https://htmlpreview.github.io/?https://github.com/SudeshnaBora/agent0/blob/master/htmlcov/agents_agent_mcts_agent_mcts_py.html)<br>
+5. [Coverage for mcts node](https://htmlpreview.github.io/?https://github.com/SudeshnaBora/agent0/blob/master/htmlcov/agents_agent_mcts_mcts_node_py.html)<br>
 
 <b>To run coverage locally</b>
 
@@ -60,6 +64,7 @@ pip install coverage <br>
 pip install pytest-cov<br> 
 pytest --cov --cov-report html
 
+### Performance of MCTS algorithm against human
 
 ### Sources
 
