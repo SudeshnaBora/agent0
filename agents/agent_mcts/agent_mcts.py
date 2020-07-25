@@ -6,7 +6,7 @@ import time
 
 PLAYER = cn.NO_PLAYER
 OPPONENT = cn.NO_PLAYER
-GLOBAL_TIME = 50
+GLOBAL_TIME = 5
 
 
 def generate_move(board: np.ndarray, player: cn.BoardPiece, saved_state: Optional[cn.SavedState]) \
