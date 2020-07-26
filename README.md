@@ -68,8 +68,8 @@ pytest --cov --cov-report html
 
 Planned 10 rounds each for 3 different simulation time of 5 units , 15 units and 50 units. The findings are as follows :- <br>
 
-| Time | Win | Losses | Draw
-| --- | ----------- |
+| Time | Win | Losses | Draw |
+| --- | ----------- | ------- | ------| 
 | 5 | 1 | 7 | 2|
 | 15 | 3 | 6 | 1 |
 | 50 | 3 | 5 | 2 |
