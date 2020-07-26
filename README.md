@@ -66,6 +66,15 @@ pytest --cov --cov-report html
 
 ### Performance of MCTS algorithm against human
 
+Planned 10 rounds each for 3 different simulation time of 5 units , 15 units and 50 units. The findings are as follows :- <br>
+
+| Time | Win | Losses | Draw
+| --- | ----------- |
+| 5 | 1 | 7 | 2|
+| 15 | 3 | 6 | 1 |
+| 50 | 3 | 5 | 2 |
+ 
+ <br> So what we can conclude is with increase in simulation time we don't see a marked change in performance. However, the algorithm takes a lot of time making it very difficult to complete a game. 
 ### Sources
 
 1. https://en.wikipedia.org/wiki/Alpha%E2%80%93beta_pruning#Pseudocode
